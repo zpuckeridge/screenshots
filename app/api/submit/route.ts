@@ -12,11 +12,8 @@ export async function POST(req: Request) {
       const post = await prisma.screenshots.create({
         data: {
           title: title,
-          description: description,
           author: author,
           image: image,
-          width: width,
-          height: height,
         },
       });
       createdPosts.push(post);

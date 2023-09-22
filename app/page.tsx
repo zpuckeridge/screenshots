@@ -9,7 +9,7 @@ async function retrieveImages() {
 export default async function Home() {
   const images = await retrieveImages();
 
-  const data = images.map((image) => {
+  const data = images.map((image: any) => {
     return {
       src: image.image,
       title: image.title,
