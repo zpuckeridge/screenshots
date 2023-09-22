@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const json = await req.json();
-    const { title, description, author, images } = json;
+    const { title, description, author, images, width, height } = json;
 
     const createdPosts = [];
 
@@ -15,6 +15,8 @@ export async function POST(req: Request) {
           description: description,
           author: author,
           image: image,
+          width: width,
+          height: height,
         },
       });
       createdPosts.push(post);

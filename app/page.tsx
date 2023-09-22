@@ -3,18 +3,23 @@ import prisma from "@/lib/prisma";
 
 async function retrieveImages() {
   const submissions = await prisma.screenshots.findMany();
-
   return submissions;
 }
 
 export default async function Home() {
-  const submissions = await retrieveImages();
+  const images = await retrieveImages();
+
+  const data = images.map((image) => {
+    return {
+      src: image.image,
+      title: image.title,
+      description: `Screenshot taken by ${image.author}`,
+    };
+  });
 
   return (
     <>
-      <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-        <ImagePreview submissions={submissions} />
-      </div>
+      <ImagePreview images={data} />
     </>
   );
 }

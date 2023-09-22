@@ -33,9 +33,6 @@ const FormSchema = z.object({
   title: z.string().max(20, {
     message: "Title must be at most 20 characters.",
   }),
-  description: z.string().max(100, {
-    message: "Description must be at most 100 characters.",
-  }),
   images: z.array(
     z
       .any()
@@ -150,27 +147,14 @@ export default function UploadForm() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Mission Name</FormLabel>
               <FormControl>
-                <Input placeholder="Hawaiian's Feet" {...field} />
+                <Input placeholder="It's time to nuke 'em gents" {...field} />
               </FormControl>
               <FormDescription>
-                This will become the title of your screenshot.
+                Enter the mission name or title. This will be added to all of
+                your uploaded screenshots.
               </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input placeholder="Were wet and smelly" {...field} />
-              </FormControl>
-              <FormDescription>Describe the screenshot.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

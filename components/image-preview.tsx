@@ -1,62 +1,65 @@
 "use client";
 
-import Image from "next/image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import PhotoAlbum from "react-photo-album";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import "yet-another-react-lightbox/plugins/captions.css";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Captions from "yet-another-react-lightbox/plugins/captions";
+import NextJsImage from "./nextjs-image-render";
 
-export default function Home({ submissions }: { submissions: any }) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+export default function ImagePreview({ images }: { images: any }) {
+  const [index, setIndex] = useState(-1);
+  const [loadedImages, setLoadedImages] = useState<any[]>([]);
 
-  const openDialog = (imageSrc: string) => {
-    setSelectedImage(imageSrc);
-  };
+  useEffect(() => {
+    const loadImages = async () => {
+      const loadedImages: any[] = [];
 
-  const closeDialog = () => {
-    setSelectedImage(null);
-  };
+      for (const image of images) {
+        try {
+          const img = new Image();
+          img.src = image.src;
+          await img.decode();
+
+          loadedImages.push({
+            ...image,
+            width: img.width,
+            height: img.height,
+          });
+        } catch (error) {
+          console.error("Error loading image:", error);
+        }
+      }
+
+      setLoadedImages(loadedImages);
+    };
+
+    loadImages();
+  }, [images]);
 
   return (
     <>
-      <Dialog>
-        {submissions.map((submission: any) => (
-          <div key={submission.id} className="relative">
-            <DialogTrigger asChild>
-              <Image
-                src={submission.image}
-                width={500}
-                height={500}
-                alt={submission.title}
-                onClick={() => openDialog(submission.image)}
-                style={{ cursor: "pointer" }}
-              />
-            </DialogTrigger>
-            <div className="absolute bottom-0 left-0 right-0 bg-black text-white p-2 opacity-75">
-              <h2 className="text-xl font-semibold">{submission.title}</h2>
-              <p className="text-sm">{submission.description}</p>
-              <p className="text-sm">{submission.author}</p>
-            </div>
-          </div>
-        ))}
-        {selectedImage && (
-          <DialogContent>
-            <div className="p-4">
-              <Image
-                src={selectedImage}
-                width={800} // Adjust the width and height as needed
-                height={600}
-                alt="Large Image"
-              />
-            </div>
-          </DialogContent>
-        )}
-      </Dialog>
+      <PhotoAlbum
+        layout="masonry"
+        photos={loadedImages}
+        renderPhoto={NextJsImage}
+        targetRowHeight={150}
+        sizes={{ size: "calc(100vw - 240px)" }}
+        onClick={({ index: current }) => setIndex(current)}
+      />
+
+      <Lightbox
+        index={index}
+        slides={loadedImages}
+        open={index >= 0}
+        close={() => setIndex(-1)}
+        plugins={[Fullscreen, Zoom, Thumbnails, Captions]}
+      />
     </>
   );
 }

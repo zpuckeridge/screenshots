@@ -10,7 +10,6 @@ datasource db {
 model Screenshots {
   id            Int      @id @default(autoincrement())
   title         String   @db.VarChar(255)
-  description   String   @db.VarChar(255)
   author        String   @db.VarChar(255)
   image         String   @db.VarChar(255)
   created_at    DateTime @default(now())
