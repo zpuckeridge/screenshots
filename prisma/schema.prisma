@@ -12,6 +12,8 @@ model Screenshots {
   title         String   @db.VarChar(255)
   author        String   @db.VarChar(255)
   image         String   @db.VarChar(1024)
+  width         Int      
+  height        Int      
   created_at    DateTime @default(now())
   votes         Json?    @db.Json
   }

@@ -39,8 +39,8 @@ const FormSchema = z.object({
       .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 10MB.`)
       .refine(
         (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-        "Only .jpg, .jpeg, .png and .webp formats are supported.",
-      ),
+        "Only .jpg, .jpeg, .png and .webp formats are supported."
+      )
   ),
 });
 
@@ -56,10 +56,10 @@ export default function UploadForm() {
 
   async function uploadImages(files: any) {
     try {
-      const imageUrls = [];
-      const formData = new FormData();
+      const imageInfo = []; // An array to store image information
 
       for (const file of files) {
+        const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "qwaph5ad"); // Replace with your Cloudinary upload preset
 
@@ -70,13 +70,16 @@ export default function UploadForm() {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          },
+          }
         );
 
-        imageUrls.push(response.data.secure_url);
+        // Extract width and height from the response
+        const { secure_url, width, height } = response.data;
+
+        imageInfo.push({ secure_url, width, height });
       }
 
-      return imageUrls; // Return an array of secure URLs
+      return imageInfo; // Return an array of objects containing secure URL, width, and height
     } catch (error) {
       console.error("Error uploading images:", error);
       throw error;
@@ -96,7 +99,7 @@ export default function UploadForm() {
         title: data.title,
         description: data.description,
         author: user?.username,
-        images: imageUrls, // Use the array of image URLs
+        images: imageUrls,
       };
 
       // Make a POST request to your API endpoint
@@ -177,7 +180,7 @@ export default function UploadForm() {
 
                       // Check file size here
                       const oversizedFiles = fileList.filter(
-                        (file) => file.size > MAX_FILE_SIZE,
+                        (file) => file.size > MAX_FILE_SIZE
                       );
 
                       if (oversizedFiles.length > 0) {

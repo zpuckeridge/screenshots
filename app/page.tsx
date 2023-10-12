@@ -13,6 +13,8 @@ export default async function Home() {
     return {
       id: image.id,
       src: image.image,
+      width: image.width,
+      height: image.height,
       title: image.title,
       description: `Screenshot taken by ${image.author}`,
       votes: image.votes,
@@ -20,8 +22,8 @@ export default async function Home() {
   });
 
   return (
-    <>
+    <div className="container py-8">
       <ImagePreview images={data} />
-    </>
+    </div>
   );
 }

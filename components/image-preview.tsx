@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import PhotoAlbum from "react-photo-album";
-import {
-  Lightbox,
-  addToolbarButton,
-  useLightboxState,
-} from "yet-another-react-lightbox";
+import React, { useState } from "react";
+import PhotoAlbum, { RenderPhotoProps } from "react-photo-album";
+import { Lightbox, useLightboxState } from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import "yet-another-react-lightbox/plugins/captions.css";
@@ -15,46 +11,39 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Captions from "yet-another-react-lightbox/plugins/captions";
-import NextJsImage from "./nextjs-image-render";
 import Vote from "./vote";
+import Image from "next/image";
+import { ThumbsUp } from "lucide-react";
 
 export default function ImagePreview({ images }: { images: any }) {
   const [index, setIndex] = useState(-1);
-  const [loadedImages, setLoadedImages] = useState<any[]>([]);
-
-  useEffect(() => {
-    const loadImages = async () => {
-      const loadedImages: any[] = [];
-
-      for (const image of images) {
-        try {
-          const img = new Image();
-          img.src = image.src;
-          await img.decode();
-
-          loadedImages.push({
-            ...image,
-            width: img.width,
-            height: img.height,
-          });
-        } catch (error) {
-          console.error("Error loading image:", error);
-        }
-      }
-
-      setLoadedImages(loadedImages);
-    };
-
-    loadImages();
-  }, [images]);
 
   function VoteButton() {
     const { currentIndex } = useLightboxState();
 
+    return <Vote data={images[currentIndex] ? images[currentIndex] : null} />;
+  }
+
+  function NextJsImage({
+    photo,
+    imageProps: { alt, title, sizes, className, onClick },
+    wrapperStyle,
+  }: RenderPhotoProps) {
+    // @ts-ignore
+    const voteCount = Array.isArray(photo.votes) ? photo.votes : [];
+    const totalVotes = voteCount.length;
+
     return (
-      <Vote
-        data={loadedImages[currentIndex] ? loadedImages[currentIndex] : null}
-      />
+      <div style={{ ...wrapperStyle, position: "relative" }}>
+        <Image
+          fill
+          src={photo}
+          {...{ alt, title, sizes, className, onClick }}
+        />
+        <div className="absolute bottom-0 left-0 w-full p-4 text-white flex gap-2">
+          <ThumbsUp /> {totalVotes}
+        </div>
+      </div>
     );
   }
 
@@ -62,7 +51,7 @@ export default function ImagePreview({ images }: { images: any }) {
     <>
       <PhotoAlbum
         layout="masonry"
-        photos={loadedImages}
+        photos={images}
         renderPhoto={NextJsImage}
         targetRowHeight={150}
         sizes={{ size: "calc(100vw - 240px)" }}
@@ -71,7 +60,7 @@ export default function ImagePreview({ images }: { images: any }) {
 
       <Lightbox
         index={index}
-        slides={loadedImages}
+        slides={images}
         open={index >= 0}
         close={() => setIndex(-1)}
         plugins={[Fullscreen, Zoom, Download, Thumbnails, Captions]}

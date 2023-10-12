@@ -59,19 +59,15 @@ export default function Vote({ data }: { data: any }) {
   }
 
   return (
-    <div className="flex gap-4 my-auto">
+    <div className="flex gap-2 my-auto">
       {/* Use voteCasted state to determine whether to display totalVotes + 1 */}
-      {voteCasted ? <p>{totalVotes + 1} votes</p> : <p>{totalVotes} votes</p>}
       {voted ? (
         // Display the tooltip if the user has already voted
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
               <button disabled={voted} onClick={castVote}>
-                <ThumbsUp
-                  className="w-7 h-7 mr-2 text-blue-500"
-                  strokeWidth={1.5}
-                />
+                <ThumbsUp className="w-7 h-7 text-blue-500" strokeWidth={1.5} />
               </button>
             </TooltipTrigger>
             <TooltipContent>
@@ -83,10 +79,15 @@ export default function Vote({ data }: { data: any }) {
         // Display the voting button if the user has not voted
         <button disabled={voted} onClick={castVote}>
           <ThumbsUp
-            className={`w-7 h-7 mr-2 ${voted ? "text-blue-500" : ""}`}
+            className={`w-7 h-7 ${voted ? "text-blue-500" : ""}`}
             strokeWidth={1.5}
           />
         </button>
+      )}
+      {voteCasted ? (
+        <p className="my-auto mr-2">{totalVotes + 1}</p>
+      ) : (
+        <p className="my-auto mr-2">{totalVotes}</p>
       )}
     </div>
   );
