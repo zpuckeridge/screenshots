@@ -73,7 +73,7 @@ export default function ImagePreview({ images }: { images: any }) {
         index={index}
         slides={loadedImages}
         open={index >= 0}
-        close={() => setIndex(0)}
+        close={() => setIndex(-1)}
         plugins={[Fullscreen, Zoom, Download, Thumbnails, Captions]}
         toolbar={{
           buttons: [
