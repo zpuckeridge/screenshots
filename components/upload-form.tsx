@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUser } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
@@ -20,6 +20,7 @@ import {
 } from "@/components/react-hook-form/form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Progress } from "./ui/progress";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -52,6 +53,7 @@ export default function UploadForm() {
     resolver: zodResolver(FormSchema),
   });
 
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
 
   async function uploadImages(files: any) {
@@ -142,6 +144,22 @@ export default function UploadForm() {
     }
   }
 
+  useEffect(() => {
+    const uploadProgressListener = axios.interceptors.request.use((config) => {
+      config.onUploadProgress = (progressEvent) => {
+        if (progressEvent.total !== undefined) {
+          const progress = (progressEvent.loaded / progressEvent.total) * 100;
+          setUploadProgress(progress);
+        }
+      };
+      return config;
+    });
+
+    return () => {
+      axios.interceptors.request.eject(uploadProgressListener);
+    };
+  }, []);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -206,6 +224,9 @@ export default function UploadForm() {
             </FormItem>
           )}
         />
+        {uploading && (
+          <Progress value={parseFloat(uploadProgress.toFixed(2))} />
+        )}
         <Button type="submit" disabled={uploading}>
           {uploading ? "Uploading..." : "Submit"}
         </Button>
