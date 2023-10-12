@@ -11,9 +11,11 @@ export default async function Home() {
 
   const data = images.map((image: any) => {
     return {
+      id: image.id,
       src: image.image,
       title: image.title,
       description: `Screenshot taken by ${image.author}`,
+      votes: image.votes,
     };
   });
 

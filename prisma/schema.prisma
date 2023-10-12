@@ -11,8 +11,7 @@ model Screenshots {
   id            Int      @id @default(autoincrement())
   title         String   @db.VarChar(255)
   author        String   @db.VarChar(255)
-  image         String   @db.VarChar(255)
+  image         String   @db.VarChar(1024)
   created_at    DateTime @default(now())
-  voteCount     Int      @default(0)
-  voterIds      Int[]
+  votes         Json?    @db.Json
   }
