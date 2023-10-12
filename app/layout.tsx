@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   openGraph: {
     url: siteConfig.url,
-    title: "Zacchary Puckeridge",
+    title: "Screenshots — ZSU ArmA 3",
     description: siteConfig.description,
     siteName: "screenshots.arma.zsu.gg",
   },
