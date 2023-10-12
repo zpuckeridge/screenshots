@@ -1,7 +1,7 @@
 "use client";
 
 import { ThumbsUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +15,11 @@ export default function Vote({ data }: { data: any }) {
   const totalVotes = votesArray.length;
 
   const [voted, setVoting] = useState(votesArray.includes(user?.username));
+
+  // Update voted state when data changes
+  useEffect(() => {
+    setVoting(votesArray.includes(user?.username));
+  }, [data, user]);
 
   async function castVote() {
     setVoting(true);

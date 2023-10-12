@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navigation from "@/components/navigation";
 import { Toaster } from "@/components/ui/toaster";
+import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,13 +22,16 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
+        <body
+          className={cn(
+            "flex min-h-screen flex-col dark:bg-[#111111] bg-white",
+            inter.className
+          )}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
-            disableTransitionOnChange
-          >
+            disableTransitionOnChange>
             <Navigation />
             {children}
             <Toaster />

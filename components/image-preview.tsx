@@ -2,13 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import PhotoAlbum from "react-photo-album";
-import { Lightbox, addToolbarButton } from "yet-another-react-lightbox";
+import {
+  Lightbox,
+  addToolbarButton,
+  useLightboxState,
+} from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import "yet-another-react-lightbox/plugins/captions.css";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Download from "yet-another-react-lightbox/plugins/download";
 import Captions from "yet-another-react-lightbox/plugins/captions";
 import NextJsImage from "./nextjs-image-render";
 import Vote from "./vote";
@@ -43,15 +48,14 @@ export default function ImagePreview({ images }: { images: any }) {
     loadImages();
   }, [images]);
 
-  function MyPlugin({ augment }: { augment: any }) {
-    augment(({ toolbar, ...restProps }: any) => ({
-      toolbar: addToolbarButton(
-        toolbar,
-        "my-button",
-        <Vote data={loadedImages[index] ? loadedImages[index] : null} />
-      ),
-      ...restProps,
-    }));
+  function VoteButton() {
+    const { currentIndex } = useLightboxState();
+
+    return (
+      <Vote
+        data={loadedImages[currentIndex] ? loadedImages[currentIndex] : null}
+      />
+    );
   }
 
   return (
@@ -69,8 +73,17 @@ export default function ImagePreview({ images }: { images: any }) {
         index={index}
         slides={loadedImages}
         open={index >= 0}
-        close={() => setIndex(-1)}
-        plugins={[Fullscreen, Zoom, Thumbnails, Captions, MyPlugin]}
+        close={() => setIndex(0)}
+        plugins={[Fullscreen, Zoom, Download, Thumbnails, Captions]}
+        toolbar={{
+          buttons: [
+            <VoteButton key="my-button" />,
+            "zoom",
+            "fullscreen",
+            "download",
+            "close",
+          ],
+        }}
       />
     </>
   );
