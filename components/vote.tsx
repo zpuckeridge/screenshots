@@ -9,10 +9,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
+import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 
 export default function Vote({ data }: { data: any }) {
+  const router = useRouter();
   const { user } = useUser();
 
   const votesArray = useMemo(() => {
@@ -47,6 +48,8 @@ export default function Vote({ data }: { data: any }) {
         title: "You've cast your vote! 🎉",
         description: `Thank you for participating!`,
       });
+
+      router.refresh();
     } catch (error) {
       console.error("Error casting vote:", error);
       setVoting(false);
