@@ -42,8 +42,8 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   title: {
-    default: "Screenshots",
-    template: "%s | ZSU ArmA 3",
+    default: "Screenshots — ZSU ArmA 3",
+    template: "%s — ZSU ArmA 3",
   },
   description: siteConfig.description,
   openGraph: {
