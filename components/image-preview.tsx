@@ -40,7 +40,7 @@ export default function ImagePreview({ images }: { images: any }) {
           src={photo}
           {...{ alt, title, sizes, className, onClick }}
         />
-        <div className="absolute bottom-4 left-4 text-white flex gap-2">
+        <div className="absolute bottom-4 left-4 text-white md:flex gap-2 hidden">
           <ThumbsUp /> {totalVotes}
         </div>
       </div>
