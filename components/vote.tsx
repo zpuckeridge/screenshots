@@ -82,7 +82,7 @@ export default function Vote({ data }: { data: any }) {
         // Display the voting button if the user has not voted
         <button disabled={voted} onClick={castVote}>
           <ThumbsUp
-            className={`w-7 h-7 ${voted ? "text-blue-500" : ""}`}
+            className={`w-7 h-7 text-white ${voted ? "text-blue-500" : ""}`}
             strokeWidth={1.5}
           />
         </button>

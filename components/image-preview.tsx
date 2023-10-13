@@ -43,6 +43,10 @@ export default function ImagePreview({ images }: { images: any }) {
         <div className="absolute bottom-4 left-4 text-white md:flex gap-2 hidden">
           <ThumbsUp /> {totalVotes}
         </div>
+        <div className="absolute bottom-4 right-4 text-white md:flex hidden bg-black bg-opacity-70 px-1 rounded-md">
+          {/* @ts-ignore */}
+          {photo.author}
+        </div>
       </div>
     );
   }
