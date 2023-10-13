@@ -13,7 +13,7 @@ import Download from "yet-another-react-lightbox/plugins/download";
 import Captions from "yet-another-react-lightbox/plugins/captions";
 import Vote from "./vote";
 import Image from "next/image";
-import { ThumbsUp } from "lucide-react";
+import { Flame } from "lucide-react";
 
 export default function ImagePreview({ images }: { images: any }) {
   const [index, setIndex] = useState(-1);
@@ -41,7 +41,7 @@ export default function ImagePreview({ images }: { images: any }) {
           {...{ alt, title, sizes, className, onClick }}
         />
         <div className="absolute bottom-4 left-4 text-white md:flex gap-2 hidden">
-          <ThumbsUp /> {totalVotes}
+          <Flame /> {totalVotes}
         </div>
         <div className="absolute bottom-4 right-4 text-white md:flex hidden bg-black bg-opacity-70 px-1 rounded-md">
           {/* @ts-ignore */}

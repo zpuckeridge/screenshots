@@ -1,6 +1,6 @@
 "use client";
 
-import { ThumbsUp } from "lucide-react";
+import { Flame } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -70,7 +70,7 @@ export default function Vote({ data }: { data: any }) {
           <Tooltip>
             <TooltipTrigger>
               <button disabled={voted} onClick={castVote}>
-                <ThumbsUp className="w-7 h-7 text-blue-500" strokeWidth={1.5} />
+                <Flame className="w-7 h-7 text-blue-500" strokeWidth={1.5} />
               </button>
             </TooltipTrigger>
             <TooltipContent>
@@ -81,7 +81,7 @@ export default function Vote({ data }: { data: any }) {
       ) : (
         // Display the voting button if the user has not voted
         <button disabled={voted} onClick={castVote}>
-          <ThumbsUp
+          <Flame
             className={`w-7 h-7 text-white ${voted ? "text-blue-500" : ""}`}
             strokeWidth={1.5}
           />

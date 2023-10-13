@@ -28,8 +28,15 @@ import {
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Progress } from "./ui/progress";
+import prisma from "@/lib/prisma";
 
-export default function UploadForm({ missions }: { missions: any }) {
+export default function UploadForm({
+  missions,
+  screenshots,
+}: {
+  missions: any;
+  screenshots: any;
+}) {
   const router = useRouter();
   const { user } = useUser();
 
@@ -99,6 +106,40 @@ export default function UploadForm({ missions }: { missions: any }) {
   async function onSubmit(data: any) {
     try {
       setUploading(true);
+
+      // Check the number of files uploaded
+      if (data.images.length > 5) {
+        toast({
+          title: "Error",
+          description: "You can upload a maximum of 3 files.",
+          variant: "destructive",
+        });
+        setUploading(false);
+        return;
+      }
+
+      // Perform a check to see if the author has already uploaded 5 screenshosts for the selected mission
+      const author = user?.username;
+      const mission = data.mission;
+
+      const authorScreenshots = screenshots.filter(
+        (screenshot: any) => screenshot.author === author
+      );
+
+      const missionScreenshots = authorScreenshots.filter(
+        (screenshot: any) => screenshot.title === mission
+      );
+
+      if (missionScreenshots.length + data.images.length > 3) {
+        toast({
+          title: "Error",
+          description: `You can upload a maximum of 3 screenshots for the ${mission} mission.`,
+          variant: "destructive",
+        });
+        setUploading(false);
+        return;
+      }
+
       const imageUrls = await uploadImages(data.images);
       setUploading(false);
 
@@ -108,7 +149,7 @@ export default function UploadForm({ missions }: { missions: any }) {
       const formData = {
         title: data.mission,
         description: data.description,
-        author: user?.username,
+        author: author, // Use the author's username
         images: imageUrls,
       };
 
@@ -122,16 +163,9 @@ export default function UploadForm({ missions }: { missions: any }) {
       });
 
       if (response.ok) {
-        const createdRecord = await response.json();
         toast({
-          title: "You submitted the following values:",
-          description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-              <code className="text-white">
-                {JSON.stringify(createdRecord, null, 2)}
-              </code>
-            </pre>
-          ),
+          title: "Upload Successful! 🎉",
+          description: "Thank you for participating!",
         });
 
         router.push("/");
