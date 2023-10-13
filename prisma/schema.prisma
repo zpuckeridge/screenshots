@@ -3,8 +3,46 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Mission {
+  id            String        @id @default(uuid()) @unique
+  createdAt     DateTime      @default(now())
+  date          DateTime      // mission date
+  name          String        @db.Text // mission name
+  fob           String        @db.Text // mission fob
+  zeus          String        @db.Text // mission zeus
+  briefing      String        @db.Text // detailed briefing
+  tasking       String        @db.Text // mission tasking, short form
+  assets        String        @db.Text // available mission assets
+  enemy         String?       @db.Text // enemy forces
+  notes         String?       @db.Text // optional notes 
+  internal      String?       @db.Text // optional internal notes
+  special       Boolean       // special mission toggle
+  stepUp        Boolean       // step up mission toggle
+  scheduled     Boolean       // scheduled mission toggle
+  published     Boolean       // published mission toggle
+  message       String?       @unique // optional link to mission message for future editing
+  reactions     Json?         @db.Json // receives usernames of users who reacted to the mission
+  jips          Json?         @db.Json // receives usernames of users who jipped the mission
+  imageUrl      String?       @db.Text // optional image url
+}
+
+model Base {
+  id            String        @id @default(uuid()) @unique
+  name          String        @db.Text // fob name
+  description   String        @db.Text // fob description
+  assets        String?       @db.Text // fob assets
+}
+
+model Zeus {
+  id           String        @id @default(uuid()) @unique
+  name         String        @db.Text // mission maker name
+  username     String        @db.Text // mission maker username
+  discord      String        @db.Text // mission maker discord
 }
 
 model Screenshots {
@@ -16,4 +54,4 @@ model Screenshots {
   height        Int      
   created_at    DateTime @default(now())
   votes         Json?    @db.Json
-  }
+}

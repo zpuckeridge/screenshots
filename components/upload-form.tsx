@@ -3,9 +3,16 @@
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUser } from "@clerk/nextjs";
+import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
@@ -22,32 +29,33 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Progress } from "./ui/progress";
 
-const MAX_FILE_SIZE = 10000000;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
-
-const FormSchema = z.object({
-  title: z.string().max(50, {
-    message: "Title must be at most 50 characters.",
-  }),
-  images: z.array(
-    z
-      .any()
-      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 10MB.`)
-      .refine(
-        (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-        "Only .jpg, .jpeg, .png and .webp formats are supported."
-      )
-  ),
-});
-
-export default function UploadForm() {
+export default function UploadForm({ missions }: { missions: any }) {
   const router = useRouter();
   const { user } = useUser();
+
+  const MAX_FILE_SIZE = 10000000;
+  const ACCEPTED_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+  ];
+
+  const FormSchema = z.object({
+    mission: z.string(),
+    images: z.array(
+      z
+        .any()
+        .refine(
+          (file) => file?.size <= MAX_FILE_SIZE,
+          `Max image size is 10MB.`
+        )
+        .refine(
+          (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+          "Only .jpg, .jpeg, .png and .webp formats are supported."
+        )
+    ),
+  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -98,7 +106,7 @@ export default function UploadForm() {
       console.log("Image URLs:", imageUrls);
 
       const formData = {
-        title: data.title,
+        title: data.mission,
         description: data.description,
         author: user?.username,
         images: imageUrls,
@@ -160,21 +168,45 @@ export default function UploadForm() {
     };
   }, []);
 
+  missions.sort(
+    (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  const handleMissionChange = (selectedMission: any) => {
+    form.setValue("mission", selectedMission);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
-          name="title"
+          name="mission"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mission Name</FormLabel>
+              <FormLabel>Mission</FormLabel>
               <FormControl>
-                <Input placeholder="It's time to nuke 'em gents" {...field} />
+                <Select name="mission" onValueChange={handleMissionChange}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select a mission" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {missions.map((mission: any) => (
+                      <SelectItem
+                        key={mission.id}
+                        value={mission.name}
+                        onClick={() => field.onChange(mission.name)}>
+                        {`${format(
+                          new Date(mission.date),
+                          "MMMM dd, yyyy"
+                        )} - ${mission.name}`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormDescription>
-                Enter the mission name or title. This will be added to all of
-                your uploaded screenshots.
+                Select the mission you want to upload screenshots for.
               </FormDescription>
               <FormMessage />
             </FormItem>

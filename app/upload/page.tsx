@@ -1,11 +1,18 @@
 import UploadForm from "@/components/upload-form";
+import prisma from "@/lib/prisma";
 
-export default function UploadPage() {
+async function getMissions() {
+  return await prisma.mission.findMany();
+}
+
+export default async function UploadPage() {
+  const missions = await getMissions();
+
   return (
     <>
       <div className="container my-10">
         <div className="max-w-2xl mx-auto">
-          <UploadForm />
+          <UploadForm missions={missions} />
         </div>
       </div>
     </>
